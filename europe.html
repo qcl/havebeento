@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8' />
+        <title>@qcl has been to...</title>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js'></script>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js'></script>
+        <script src='//datamaps.github.io/scripts/0.5.0/datamaps.world.hires.min.js'></script>
+        <style>
+            body {
+                padding: 0;    
+                margin: 0;
+            
+            #world-map {
+                width: 100%;
+                height: 100%;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id='world-map'></div>
+        <script>
+            let map = new Datamap({
+                element: document.getElementById('world-map'),
+                responsive: true,
+                fills: {
+                    defaultFill: '#ebedf0',
+                    'live': '#196127',
+                    'high': '#239a3b',
+                    'twice': '#7bc96f',
+                    'once': '#c6e48b',
+                },
+                setProjection: function(element) {
+                    var projection = d3.geo.equirectangular()
+                    .center([15.996094, 54.95122])
+                    .scale(1000)
+                    .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+                    var path = d3.geo.path()
+                    .projection(projection);
+
+                    return {path: path, projection: projection};
+                },
+                data: {
+                    'TWN': {fillKey: 'live'},
+                    'NLD': {fillKey: 'live'},
+                    'CHN': {fillKey: 'once'},
+                    'JPN': {fillKey: 'high'},
+                    'DEU': {fillKey: 'twice'},
+                    'BEL': {fillKey: 'twice'},
+                    'LUX': {fillKey: 'once'},
+                    'FRA': {fillKey: 'once'},
+                    'FIN': {fillKey: 'once'},
+                    'EST': {fillKey: 'once'},
+                    'GBR': {fillKey: 'once'},
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                map.resize();
+            });
+        </script>
+    </body>
+</html>
+
