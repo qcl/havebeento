@@ -13,20 +13,16 @@
         <canvas id="space">
         </canvas>
 <script>
-console.log("Hello!");
-
 let canvas = d3.select("#space");
 canvas.attr("width", 800).attr("height", 600);
 
 const init = async () => {
 
-    /*
     let response = await fetch("https://unpkg.com/world-atlas@1/world/50m.json");
     let json = await response.json();
     let world = json;
 
-    let land = topojson.feature(world, world.objects.land);
-    */
+    let land = topojson.feature(world, world.objects.land); // topo json -> geo json
     let graticule = d3.geoGraticule10();
 
     // 1. prpare projection
@@ -42,6 +38,12 @@ const init = async () => {
     context.beginPath();
     path(graticule);
     context.stroke();
+
+    // 3.1 draw land
+    context.beginPath();
+    path(land);
+    context.stroke();
+    //context.fill();
 };
 
 
