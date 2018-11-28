@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Earth test</title>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://unpkg.com/topojson@3"></script>
+        <style>
+        </style>
+    </head>
+    <body>
+        <h1>Earth</h1>
+        <canvas id="space">
+        </canvas>
+<script>
+console.log("Hello!");
+
+let canvas = d3.select("#space");
+canvas.attr("width", 800).attr("height", 600);
+
+const init = async () => {
+
+    /*
+    let response = await fetch("https://unpkg.com/world-atlas@1/world/50m.json");
+    let json = await response.json();
+    let world = json;
+
+    let land = topojson.feature(world, world.objects.land);
+    */
+    let graticule = d3.geoGraticule10();
+
+    // 1. prpare projection
+    //let projection = d3.geoEquirectangular();
+    let projection = d3.geoOrthographic();
+
+    let context = canvas.node().getContext("2d");
+
+    // 2. use path generator
+    let path = d3.geoPath(projection, context);
+
+    // 3. draw graticule
+    context.beginPath();
+    path(graticule);
+    context.stroke();
+};
+
+
+init();
+
+</script>
+    </body>
+</html>
