@@ -6,15 +6,23 @@
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://unpkg.com/topojson@3"></script>
         <style>
+body {
+    margin: 0px;
+}
+#space{
+    background: black;
+    width: 100vw;
+    height: 100vh;
+}
         </style>
     </head>
     <body>
-        <h1>Earth</h1>
         <canvas id="space">
         </canvas>
 <script>
 let canvas = d3.select("#space");
-canvas.attr("width", 800).attr("height", 600);
+let {width, height} = canvas.node().getBoundingClientRect();
+canvas.attr("width", width).attr("height", height);
 
 const init = async () => {
 
@@ -22,28 +30,80 @@ const init = async () => {
     let json = await response.json();
     let world = json;
 
+    // map data
     let land = topojson.feature(world, world.objects.land); // topo json -> geo json
     let graticule = d3.geoGraticule10();
 
     // 1. prpare projection
     //let projection = d3.geoEquirectangular();
     let projection = d3.geoOrthographic();
+    projection.translate([width/2, height/2]);   // set center point to canva's center
+    projection.scale(100);
+    projection.rotate([-480, -25]); // rotate Taiwan to center of the projection 
 
     let context = canvas.node().getContext("2d");
 
     // 2. use path generator
     let path = d3.geoPath(projection, context);
 
-    // 3. draw graticule
-    context.beginPath();
-    path(graticule);
-    context.stroke();
+    let drawMap = () => {
+        // draw background
+        context.beginPath();
+        path({type: 'Sphere'});
+        context.fillStyle = 'blue';
+        context.fill();
 
-    // 3.1 draw land
-    context.beginPath();
-    path(land);
-    context.stroke();
-    //context.fill();
+        // 3. draw graticule
+        context.beginPath();
+        path(graticule);
+        context.strokeStyle = 'lightgray';
+        context.stroke();
+
+        // 3.1 draw land
+        context.beginPath();
+        path(land);
+        //context.stroke();
+        context.fillStyle = 'green';
+        context.fill();
+    };
+ 
+    // behavior
+    let lastTransform = undefined;
+    let zoomed = () => {
+        //console.log("zoomed!");
+        //console.log(d3.event);
+        //console.log(d3.event.transform.k);
+
+        // context.translate(d3.event.transform.x,d3.event.transform.y);
+        // context.scale(d3.event.transform.k / 100, d3.event.transform / 100);
+        if (d3.event.transform && lastTransform) {
+            let {x, y, k} = d3.event.transform;
+            let {x: ox, y:oy, k:ok} = lastTransform;
+
+            if (Math.abs(k - ok) > 0.0001) {
+                projection.scale(k);
+            } else {
+                let diffX = x - ox;
+                let diffY = -1 * (y - oy);
+                let rotate = projection.rotate();
+                rotate[0] = rotate[0] + diffX;
+                rotate[1] = rotate[1] + diffY;
+                projection.rotate(rotate);
+            }
+
+            context.save();
+            context.clearRect(0,0, width, height);
+            drawMap();
+            context.restore();
+        }
+        lastTransform = d3.event.transform;
+    };
+
+    let zoom = d3.zoom()
+        .scaleExtent([100, 3200])
+        .on("zoom", zoomed);
+    drawMap();
+    canvas.call(zoom);
 };
 
 
