@@ -29,6 +29,14 @@ const init = async () => {
     let response = await fetch("https://unpkg.com/world-atlas@1/world/50m.json");
     let json = await response.json();
     let world = json;
+    console.log(world);
+
+    let initScale = 100;
+    let minScale = 100;
+    let maxScale = 3200;
+
+    let maxRotateY = 90;
+    let minRotateY = -90;
 
     // map data
     let land = topojson.feature(world, world.objects.land); // topo json -> geo json
@@ -38,7 +46,8 @@ const init = async () => {
     //let projection = d3.geoEquirectangular();
     let projection = d3.geoOrthographic();
     projection.translate([width/2, height/2]);   // set center point to canva's center
-    projection.scale(100);
+    projection.scale(initScale);
+    projection.clipAngle(90);
     projection.rotate([-480, -25]); // rotate Taiwan to center of the projection 
 
     let context = canvas.node().getContext("2d");
@@ -86,8 +95,23 @@ const init = async () => {
                 let diffX = x - ox;
                 let diffY = -1 * (y - oy);
                 let rotate = projection.rotate();
-                rotate[0] = rotate[0] + diffX;
-                rotate[1] = rotate[1] + diffY;
+
+                // use ratio to control the speed of dragging
+                let ratio = 0.5;
+                if ( k >= minScale ) {
+                    ratio = ratio * minScale/k;
+                }
+
+                rotate[0] = rotate[0] + diffX * ratio;
+                rotate[1] = rotate[1] + diffY * ratio;
+
+                // limit the rotate of y in a certain range
+                if (rotate[1] > maxRotateY) {
+                    rotate[1] = maxRotateY;
+                } else if (rotate[1] < minRotateY) {
+                    rotate[1] = minRotateY;
+                }
+
                 projection.rotate(rotate);
             }
 
@@ -100,10 +124,32 @@ const init = async () => {
     };
 
     let zoom = d3.zoom()
-        .scaleExtent([100, 3200])
+        .scaleExtent([minScale, maxScale])
         .on("zoom", zoomed);
     drawMap();
     canvas.call(zoom);
+
+    let onResize = () => {
+        // get new size
+        let {width: nw, height: nh} = canvas.node().getBoundingClientRect();
+
+        // update size
+        width = nw;
+        height = nh;
+
+        // reset canvas
+        canvas.attr("width", width).attr("height", height);
+
+        // reset projection to the center with new canvas size
+        projection.translate([width/2, height/2]); 
+
+        // redraw 
+        context.save();
+        context.clearRect(0,0, width, height);
+        drawMap();
+        context.restore();
+    };
+    window.addEventListener('resize', onResize);
 };
 
 
