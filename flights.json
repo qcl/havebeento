@@ -1,0 +1,94 @@
+[
+    {
+        "from"  : "TSA",
+        "to"    : "MZG"
+    },
+    {
+        "from"  : "TPE",
+        "to"    : "SZX"
+    },
+    {
+        "from"  : "TPE",
+        "to"    : "HKG"
+    },
+    {
+        "from"  : "HKG",
+        "to"    : "HEL"
+    },
+    {
+        "from"  : "TPE",
+        "to"    : "NRT"
+    },
+    {
+        "from"  : "TPE",
+        "to"    : "AMS"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "TXL"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "LCY"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "NCE"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "CPH"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "WAW"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "STR"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "OSL"
+    },
+    {
+        "from"  : "OSL",
+        "to"    : "TOS"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "OPO"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "ATH"
+    },
+    {
+        "from"  : "ATH",
+        "to"    : "JTR"
+    },
+    {
+        "from"  : "JTR",
+        "to"    : "AMS"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "BSL"
+    },
+    {
+        "from"  : "SXB",
+        "to"    : "AMS"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "HEL"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "HKG"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "ARN"
+    }
+]

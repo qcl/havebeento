@@ -26,10 +26,30 @@ canvas.attr("width", width).attr("height", height);
 
 const init = async () => {
 
-    let response = await fetch("https://unpkg.com/world-atlas@1/world/50m.json");
+    let response = await fetch("https://unpkg.com/world-atlas@1/world/110m.json");
     let json = await response.json();
     let world = json;
     console.log(world);
+
+    let airports = await fetch("./airports.json");
+    airports = await airports.json();
+    let flights = await fetch("./flights.json");
+    flights = await flights.json();
+
+    let flightPaths = [];
+
+    for(flight of flights) {
+        let {from, to} = flight;
+        let fromCoord = airports[from];
+        let toCoord = airports[to];
+        let flightPath = {};
+        flightPath.type = "LineString";
+        flightPath.coordinates = [
+            [fromCoord[1], fromCoord[0]],
+            [toCoord[1], toCoord[0]]
+        ];
+        flightPaths.push(flightPath);
+    }
 
     let initScale = 100;
     let minScale = 100;
@@ -56,6 +76,7 @@ const init = async () => {
     let path = d3.geoPath(projection, context);
 
     let drawMap = () => {
+        context.clearRect(0, 0, width, height);
         // draw background
         context.beginPath();
         path({type: 'Sphere'});
@@ -63,10 +84,10 @@ const init = async () => {
         context.fill();
 
         // 3. draw graticule
-        context.beginPath();
-        path(graticule);
-        context.strokeStyle = 'lightgray';
-        context.stroke();
+        //context.beginPath();
+        //path(graticule);
+        //context.strokeStyle = 'lightgray';
+        //context.stroke();
 
         // 3.1 draw land
         context.beginPath();
@@ -74,6 +95,13 @@ const init = async () => {
         //context.stroke();
         context.fillStyle = 'green';
         context.fill();
+
+        // 4. try to draw path
+        context.beginPath();
+        for(flightPath of flightPaths) {
+            path(flightPath);
+        }
+        context.stroke();
     };
  
     // behavior
@@ -126,8 +154,39 @@ const init = async () => {
     let zoom = d3.zoom()
         .scaleExtent([minScale, maxScale])
         .on("zoom", zoomed);
+
+    let drag = d3.drag()
+        .on('drag', () => {
+            console.log('## drag');
+            let dx = d3.event.dx;
+            let dy = d3.event.dy;
+
+            let rotation = projection.rotate();
+            let radius = projection.scale();
+            let scale = d3.scaleLinear().domain([-1 * radius, radius]).range([-90, 90]);
+            let degX = scale(dx);
+            let degY = scale(dy);
+
+            rotation[0] += degX;
+            rotation[1] -= degY;
+
+            if (rotation[1] > 90) {
+                rotation[1] = 90;
+            } else if (rotation[1] < -90) {
+                rotation[1] = -90;
+            }
+
+            if (rotation[0] > 180) {
+                rotation[0] -= 360;
+            }
+
+            projection.rotate(rotation);
+            drawMap();
+    })
+
     drawMap();
     canvas.call(zoom);
+//    canvas.call(drag);
 
     let onResize = () => {
         // get new size
