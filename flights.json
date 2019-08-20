@@ -90,5 +90,9 @@
     {
         "from"  : "AMS",
         "to"    : "ARN"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "ZRH"
     }
 ]
