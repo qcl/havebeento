@@ -49,6 +49,10 @@
     },
     {
         "from"  : "AMS",
+        "to"    : "BUD"
+    },
+    {
+        "from"  : "AMS",
         "to"    : "OSL"
     },
     {
