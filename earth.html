@@ -26,7 +26,7 @@ canvas.attr("width", width).attr("height", height);
 
 const init = async () => {
 
-    let response = await fetch("https://unpkg.com/world-atlas@1/world/110m.json");
+    let response = await fetch("https://unpkg.com/world-atlas@2/countries-110m.json");
     let json = await response.json();
     let world = json;
     console.log(world);
@@ -35,6 +35,9 @@ const init = async () => {
     airports = await airports.json();
     let flights = await fetch("./flights.json");
     flights = await flights.json();
+    let visitedCountries = await fetch("./visitedCountries.json")
+    visitedCountries = await visitedCountries.json();
+    visitedCountryIds = visitedCountries.map(x => x.id);
 
     let flightPaths = [];
 
@@ -60,6 +63,10 @@ const init = async () => {
 
     // map data
     let land = topojson.feature(world, world.objects.land); // topo json -> geo json
+    let countries = topojson.feature(world, world.objects.countries).features;
+    let visitedCountryData = countries.filter(x => visitedCountryIds.indexOf(x.id) > -1 );
+    console.log(visitedCountryData);
+    let borders = topojson.mesh(world, world.objects.countries, (a,b) => { return a !== b; });
     let graticule = d3.geoGraticule10();
 
     // 1. prpare projection
@@ -93,11 +100,28 @@ const init = async () => {
         context.beginPath();
         path(land);
         //context.stroke();
-        context.fillStyle = 'green';
+        context.fillStyle = '#7bc96f';
         context.fill();
+
+        // 3.2 draw visited countires
+        context.beginPath();
+        context.fillStyle = 'green';
+        for(country of visitedCountryData) {
+            path(country);
+        }
+        context.fill();
+
+        // 3.3 draw borders
+        context.beginPath();
+        path(borders);
+        context.strokeStyle = '#fff';
+        context.lineWidth = 0.25;
+        context.stroke();
 
         // 4. try to draw path
         context.beginPath();
+        context.strokeStyle = '#000';
+        context.lineWidth = 1;
         for(flightPath of flightPaths) {
             path(flightPath);
         }
