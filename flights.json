@@ -94,5 +94,9 @@
     {
         "from"  : "AMS",
         "to"    : "ZRH"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "BCN"
     }
 ]
