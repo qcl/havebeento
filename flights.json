@@ -106,5 +106,9 @@
     {
         "from"  : "TPE",
         "to"    : "KIX"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "KIX"
     }
 ]
