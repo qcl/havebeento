@@ -110,5 +110,9 @@
     {
         "from"  : "AMS",
         "to"    : "KIX"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "GVA"
     }
 ]
