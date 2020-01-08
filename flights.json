@@ -114,5 +114,13 @@
     {
         "from"  : "AMS",
         "to"    : "GVA"
+    },
+    {
+        "from"  : "AMS",
+        "to"    : "AUH"
+    },
+    {
+        "from"  : "AUH",
+        "to"    : "HKT"
     }
 ]
