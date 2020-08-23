@@ -122,5 +122,9 @@
     {
         "from"  : "AUH",
         "to"    : "HKT"
+    },
+    {
+        "from"  : "TSA",
+        "to"    : "KNH"
     }
 ]
